@@ -1,5 +1,6 @@
 RUN APP
 docker build -t ml .
+
 docker run -p 5000:5000 ml
 
 
