@@ -1,0 +1,81 @@
+<html>
+
+<head>
+    <style>
+    .loader {
+        border: 4px solid #f3f3f3; /* Light grey */
+        border-top: 4px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 2s linear infinite;
+      }
+      @keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+    </style>
+</head>
+<body>
+
+<h3>Fetch Rewards Take Home Exercise</h3>
+<form>
+    <span id="label" style="font-size: 12px;"></span>
+    <br/>
+    <input type="range" min="1" max="12" value="1" class="slider" id="myRange" onchange="change()">
+    <button id="submit_button" type="button" onsubmit="submit()">Submit</button>
+
+</form>
+<br\>
+<div id="spinner" class="loader" style="display: none;"></div>
+<br\>
+<h3 id="results" style="display: none;"></h3>
+<img id="graph" src="" style="display: none;"> 
+</body>
+
+<script>
+  
+    function submit(e){
+        e.preventDefault();
+        document.getElementById("spinner").style.display = "grid";
+        document.getElementById("results").style.display = "inline-block";
+
+        let url = new URLSearchParams();
+        url.append("months",document.getElementById("myRange").value )
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function(){
+
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("spinner").style.display = "none";
+                let resp = JSON.parse(xmlHttp.response)
+                document.getElementById("graph").src = "data:image/png;base64, " + resp.image
+                document.getElementById("graph").style.display = "inline-block";
+                document.getElementById("results").innerText = "Total Monthly Scans: " + parseInt(resp.total)
+                console.log(xmlHttp.response);            }
+         
+        }
+
+        xmlHttp.open( "GET", "/getData?" + url.toString(), true ); // false for synchronous request
+        xmlHttp.send( null );
+ 
+        
+    }
+    function change(){
+
+      document.getElementById("label").innerText = "Months: " +  document.getElementById("myRange").value; 
+    }
+    document.getElementById("submit_button").addEventListener("click", submit);
+
+</script>
+</html>
